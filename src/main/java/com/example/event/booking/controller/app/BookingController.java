@@ -5,6 +5,7 @@ import com.example.event.booking.dao.EventRepository;
 import com.example.event.booking.model.Booking;
 import com.example.event.booking.model.Event;
 import com.example.event.booking.payload.BookingRequest;
+import com.example.event.booking.service.EmailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +17,13 @@ public class BookingController {
 
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
+    private final EmailService emailService;
 
     public BookingController(BookingRepository bookingRepository,
-                             EventRepository eventRepository) {
+                             EventRepository eventRepository, EmailService emailService) {
         this.bookingRepository = bookingRepository;
         this.eventRepository = eventRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/confirmBooking")
@@ -39,6 +42,8 @@ public class BookingController {
                 .build();
 
         Booking saved = bookingRepository.save(booking);
+        emailService.sendTicketEmail(booking);
+
 
         return ResponseEntity.ok(saved); // ✅ returns JSON
     }
