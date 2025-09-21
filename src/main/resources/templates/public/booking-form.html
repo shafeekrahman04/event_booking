@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Details — EventX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .event-hero img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .event-info {
+      margin: 20px 0;
+    }
+
+    .event-info h1 {
+      margin: 0 0 10px;
+    }
+
+    .badge {
+      background: #eee;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-right: 8px;
+    }
+
+    .seating {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+    }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 35px);
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .seat {
+      width: 35px;
+      height: 35px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .seat.vip {
+      background: #c0392b;
+      color: white;
+    }
+
+    .seat.premium {
+      background: #2980b9;
+      color: white;
+    }
+
+    .seat.normal {
+      background: #27ae60;
+      color: white;
+    }
+
+    .seat.booked {
+      background: #aaa !important;
+      cursor: not-allowed;
+    }
+
+    .seat.selected {
+      outline: 3px solid #000;
+    }
+
+    .summary {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .summary p {
+      margin: 8px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 18px;
+      background: #111827;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .seat-grid {
+        grid-template-columns: repeat(5, 35px);
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .event-mini {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .qrbox {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header th:text="${event.title}">🎶 Live Concert 2025</header>
+
+  <div class="container">
+    <div class="event-hero">
+      <img th:src="${event.image}" th:alt="${event.title}" />
+    </div>
+    <div class="event-info">
+      <h1 th:text="${event.title}">Live Concert 2025</h1>
+      <p>
+        <span class="badge" th:text="'Date: ' + ${event.dateTime}">Date: Sept 12, 2025</span>
+        <span class="badge" th:text="'Venue: ' + ${event.location}">Venue: City Auditorium</span>
+      </p>
+    </div>
+
+    <div class="seating">
+      <h2>Select Your Seats</h2>
+      <p><strong>Categories:</strong>
+        <span class="badge" style="background:#c0392b;color:white;" th:text="'VIP ₹' + ${event.priceVIP}">VIP
+          ₹1500</span>
+        <span class="badge" style="background:#2980b9;color:white;"
+          th:text="'Premium ₹' + ${event.pricePremium}">Premium ₹1000</span>
+        <span class="badge" style="background:#27ae60;color:white;" th:text="'Normal ₹' + ${event.priceNormal}">Normal
+          ₹500</span>
+      </p>
+
+
+      <div id="seatGrid" class="seat-grid"
+        th:style="'display: grid; grid-template-columns: repeat(' + ${event.cols} + ', 35px); grid-template-rows: repeat(' + ${event.rows} + ', 35px); gap: 8px; justify-content: center;'">
+      </div>
+
+    </div>
+
+    <div class="summary">
+      <p>Selected Seats: <span id="selected-seats">None</span></p>
+      <p>Total Price: ₹<span id="total-price">0</span></p>
+      <form id="checkoutForm" th:action="@{/v1/checkout}" method="post">
+        <input type="hidden" name="eventId" th:value="${event.id}" />
+        <input type="hidden" name="seats" id="checkoutSeats" />
+        <input type="hidden" name="totalPrice" id="checkoutPrice" />
+        <button type="submit" class="btn" onclick="prepareCheckout()">Proceed to Checkout</button>
+      </form>
+
+    </div>
+  </div>
+  </div>
+
+  <script th:inline="javascript">
+    const seatGrid = document.getElementById("seatGrid");
+
+    // Prices from backend
+    const prices = {
+      VIP: /*[[${event.priceVIP}]]*/ 1500,
+      PREMIUM: /*[[${event.pricePremium}]]*/ 1000,
+      NORMAL: /*[[${event.priceNormal}]]*/ 500
+    };
+
+    let selectedSeats = [];
+    let totalPrice = 0;
+
+    // Seats from backend
+    const seats = /*[[${event.seats}]]*/[]; // This should render as JSON list of seat objects
+    const bookedSeats = /*[[${bookedSeats}]]*/[];
+
+    seats.forEach(seat => {
+      const div = document.createElement("div");
+      div.classList.add("seat");
+      div.classList.add(seat.zone.toLowerCase());
+      div.innerText = seat.code;
+
+      // Disable if booked
+      if (bookedSeats.includes(seat.code) || seat.blocked || seat.zone === 'EMPTY') {
+        div.classList.add("booked");
+      }
+
+      div.addEventListener("click", () => {
+        if (div.classList.contains("booked")) return;
+
+        if (div.classList.contains("selected")) {
+          div.classList.remove("selected");
+          selectedSeats = selectedSeats.filter(s => s !== seat.code);
+          totalPrice -= prices[seat.zone];
+        } else {
+          div.classList.add("selected");
+          selectedSeats.push(seat.code);
+          totalPrice += prices[seat.zone];
+        }
+
+        document.getElementById("selected-seats").innerText = selectedSeats.length ? selectedSeats.join(", ") : "None";
+        document.getElementById("total-price").innerText = totalPrice;
+      });
+
+      seatGrid.appendChild(div);
+    });
+    
+    function prepareCheckout() {
+      if (selectedSeats.length === 0) {
+        alert("Please select at least one seat!");
+        event.preventDefault(); // stop form submit
+        return;
+      }
+
+      document.getElementById("checkoutSeats").value = JSON.stringify(selectedSeats);
+      document.getElementById("checkoutPrice").value = totalPrice;
+    }
+
+
+  </script>
+</body>
+
+</html>
