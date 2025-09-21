@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin • EventX — Edit Event</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #fff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 8px 28px rgba(2, 8, 23, .06);
+      --radius: 14px;
+      --vip: #c0392b;
+      --prem: #2980b9;
+      --norm: #27ae60;
+      --block: #9ca3af;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: #111827;
+      color: #fff;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 22px auto;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+    }
+
+    @media(max-width:1000px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .inner {
+      padding: 18px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      box-shadow: 0 0 0 6px rgba(14, 165, 233, .15);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #111827;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn--ghost {
+      background: #fff;
+      color: #111827;
+      border: 1px solid var(--border);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .palette {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .pill.vip {
+      background: var(--vip);
+      color: #fff;
+      border-color: var(--vip);
+    }
+
+    .pill.prem {
+      background: var(--prem);
+      color: #fff;
+      border-color: var(--prem);
+    }
+
+    .pill.norm {
+      background: var(--norm);
+      color: #fff;
+      border-color: var(--norm);
+    }
+
+    .pill.block {
+      background: #fff;
+      color: #111827;
+      border-color: var(--border);
+    }
+
+    .pill.active {
+      outline: 3px solid rgba(17, 24, 39, .2);
+    }
+
+    .seat-wrap {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .seat-grid {
+      display: grid;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .seat {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .seat.vip {
+      background: var(--vip);
+    }
+
+    .seat.premium {
+      background: var(--prem);
+    }
+
+    .seat.normal {
+      background: var(--norm);
+    }
+
+    .seat.blocked {
+      background: var(--block);
+    }
+
+    .seat.empty {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .legend .box {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header style="display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-weight:900;">My Events</div>
+    <nav style="display:flex;gap:14px;">
+      <a th:href="@{/admin/organizer}" style="color:#fff;text-decoration:none;font-weight:600;">Event List</a>
+      <a th:href="@{/admin/organizer/add}" style="color:#fff;text-decoration:none;font-weight:600;">Event Add</a>
+    </nav>
+    <form th:action="@{/logout}" method="post" style="display:inline">
+      <button type="submit" class="btn btn--ghost">
+        <i class="ri-logout-box-r-line"></i> Logout
+      </button>
+    </form>
+
+  </header>
+
+
+  <div class="container">
+    <div class="grid">
+      <!-- Event form -->
+      <div class="card">
+        <div class="inner">
+          <h2>Event details</h2>
+          <div class="row">
+            <div>
+              <label>Title</label>
+              <input id="title" th:value="${events.title}" placeholder="Live Concert 2025" />
+            </div>
+            <div>
+              <label>Date & Time</label>
+              <input id="date" type="datetime-local" th:value="${events.dateTime}" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Venue</label>
+              <input id="venue" th:value="${events.location}" placeholder="City Auditorium" />
+            </div>
+            <div>
+              <label>Hero Image URL</label>
+              <input id="image" th:value="${events.image}" placeholder="https://..." />
+            </div>
+          </div>
+          <h3>Base prices</h3>
+          <div class="row">
+            <div>
+              <label>VIP (₹)</label>
+              <input id="pVIP" type="number" th:value="${events.priceVIP}" />
+            </div>
+            <div>
+              <label>Premium (₹)</label>
+              <input id="pPREM" type="number" th:value="${events.pricePremium}" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Normal (₹)</label>
+              <input id="pNORM" type="number" th:value="${events.priceNormal}" />
+            </div>
+            <div>
+              <label>Rating</label>
+              <input id="rating" type="number" step="0.1" th:value="${events.rating}" />
+            </div>
+          </div>
+
+          <h3 style="margin-top:12px">Seat grid</h3>
+          <div class="row">
+            <div>
+              <label>Rows</label>
+              <input id="rows" type="number" min="1" max="20" th:value="${events.rows}" />
+            </div>
+            <div>
+              <label>Cols</label>
+              <input id="cols" type="number" min="1" max="20" th:value="${events.cols}" />
+            </div>
+          </div>
+          <div class="bar">
+            <button class="btn btn--ghost" type="button" onclick="buildGrid()">Build / Reset Grid</button>
+            <button class="btn" type="button" onclick="submitEdit()">Update Event</button>
+          </div>
+          <p class="muted">Tip: pick a tool below, then click seats to paint zones. “Blocked” makes a seat unavailable.
+          </p>
+        </div>
+      </div>
+
+      <!-- Seat editor -->
+      <div class="card">
+        <div class="inner">
+          <h2>Seat designer</h2>
+          <div class="palette" id="tools">
+            <div class="pill vip active" data-tool="VIP"><i class="ri-vip-crown-2-line"></i> VIP</div>
+            <div class="pill prem" data-tool="PREMIUM"><i class="ri-vip-diamond-line"></i> Premium</div>
+            <div class="pill norm" data-tool="NORMAL"><i class="ri-user-line"></i> Normal</div>
+            <div class="pill block" data-tool="BLOCKED"><i class="ri-close-line"></i> Blocked</div>
+            <div class="pill" data-tool="EMPTY"><i class="ri-eraser-line"></i> Empty</div>
+          </div>
+
+          <div class="legend" style="margin:10px 0 6px">
+            <span><span class="box" style="background:var(--vip)"></span> VIP</span>
+            <span><span class="box" style="background:var(--prem)"></span> Premium</span>
+            <span><span class="box" style="background:var(--norm)"></span> Normal</span>
+            <span><span class="box" style="background:var(--block)"></span> Blocked</span>
+            <span><span class="box" style="background:#e5e7eb"></span> Empty</span>
+          </div>
+
+          <div class="seat-wrap">
+            <div id="seatGrid" class="seat-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    const state = {
+      tool: "VIP",
+      rows: [[${ events.rows }]],
+      cols: [[${ events.cols }]],
+      grid: []
+    };
+
+    const seatCode = (r, c) => String.fromCharCode(65 + r) + (c + 1);
+
+    // Thymeleaf seats
+    const thSeats = /*[[${events.seats}]]*/[];
+
+    if (thSeats.length > 0) {
+      state.grid = Array.from({ length: state.rows }, (_, r) =>
+        Array.from({ length: state.cols }, (_, c) => ({ code: seatCode(r, c), zone: "EMPTY", blocked: false }))
+      );
+      thSeats.forEach(s => {
+        const row = s.code.charCodeAt(0) - 65;
+        const col = parseInt(s.code.slice(1), 10) - 1;
+        state.grid[row][col] = {
+          id: s.id,
+          code: s.code,
+          zone: s.zone,
+          blocked: s.blocked
+        };
+      });
+    }
+    else {
+      buildGrid();
+    }
+
+    function buildGrid() {
+      const newRows = parseInt(document.getElementById("rows").value, 10) || 3;
+      const newCols = parseInt(document.getElementById("cols").value, 10) || 4;
+
+      const newGrid = Array.from({ length: newRows }, (_, r) =>
+        Array.from({ length: newCols }, (_, c) => {
+          const code = seatCode(r, c);
+          // if old cell exists, keep it
+          if (state.grid[r] && state.grid[r][c]) {
+            return { ...state.grid[r][c], code };
+          }
+
+          // otherwise create new empty cell
+          return { code, zone: "EMPTY", blocked: false };
+        })
+      );
+
+      state.rows = newRows;
+      state.cols = newCols;
+      state.grid = newGrid;
+      drawGrid();
+    }
+
+    function drawGrid() {
+      const grid = document.getElementById("seatGrid");
+      grid.style.gridTemplateColumns = `repeat(${state.cols}, 32px)`;
+      grid.innerHTML = "";
+      state.grid.forEach((row, r) => row.forEach((cell, c) => {
+        const el = document.createElement("div");
+        el.className = "seat " + (cell.blocked ? "blocked" : (cell.zone === "VIP" ? "vip" : cell.zone === "PREMIUM" ? "premium" : cell.zone === "NORMAL" ? "normal" : "empty"));
+        el.textContent = cell.zone === "EMPTY" && !cell.blocked ? "" : cell.code;
+        el.title = cell.code + " • " + (cell.blocked ? "BLOCKED" : cell.zone);
+        el.addEventListener("click", () => paintCell(r, c));
+        grid.appendChild(el);
+      }));
+    }
+
+    document.querySelectorAll("#tools .pill").forEach(p => {
+      p.addEventListener("click", () => {
+        document.querySelectorAll("#tools .pill").forEach(x => x.classList.remove("active"));
+        p.classList.add("active");
+        state.tool = p.dataset.tool;
+      });
+    });
+
+    function paintCell(r, c) {
+      const cell = state.grid[r][c];
+      switch (state.tool) {
+        case "VIP": cell.zone = "VIP"; cell.blocked = false; break;
+        case "PREMIUM": cell.zone = "PREMIUM"; cell.blocked = false; break;
+        case "NORMAL": cell.zone = "NORMAL"; cell.blocked = false; break;
+        case "BLOCKED": cell.blocked = true; break;
+        case "EMPTY": cell.zone = "EMPTY"; cell.blocked = false; break;
+      }
+      drawGrid();
+    }
+
+    async function submitEdit() {
+      const eventId = /*[[${events.id}]]*/ 0;
+
+      const event = {
+        id: eventId, // ensure event id is sent
+        title: document.getElementById("title").value,
+        dateTime: document.getElementById("date").value,
+        location: document.getElementById("venue").value,
+        image: document.getElementById("image").value,
+        rating: parseFloat(document.getElementById("rating").value),
+        priceVIP: parseInt(document.getElementById("pVIP").value, 10),
+        pricePremium: parseInt(document.getElementById("pPREM").value, 10),
+        priceNormal: parseInt(document.getElementById("pNORM").value, 10),
+
+        rows: state.rows,
+        cols: state.cols,
+
+        seats: state.grid.flat().map(cell => ({
+          id: cell.id || null, // ✅ if seat exists, keep its id
+          code: cell.code,
+          zone: cell.zone,
+          blocked: cell.blocked,
+          eventId: eventId
+        }))
+      };
+
+      const res = await fetch(`/admin/organizer/edit/${eventId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(event)
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    drawGrid();
+  </script>
+</body>
+
+</html>

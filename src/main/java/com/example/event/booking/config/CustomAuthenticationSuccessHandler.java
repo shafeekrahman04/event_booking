@@ -21,7 +21,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             response.sendRedirect("/admin/event-admin");
         }
         else if (roles.contains("ROLE_ORGANIZER")) {
-            response.sendRedirect("/admin/event-organizer");
+            response.sendRedirect("/admin/organizer");
         } else {
             response.sendRedirect("/v1/home");
         }

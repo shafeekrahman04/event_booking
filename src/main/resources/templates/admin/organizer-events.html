@@ -154,7 +154,11 @@
 
 <body>
   <header style="display:flex;justify-content:space-between;align-items:center;">
-    <div>My Events</div>
+    <div style="font-weight:900;">My Events</div>
+    <nav style="display:flex;gap:14px;">
+      <a th:href="@{/admin/organizer}" style="color:#fff;text-decoration:none;font-weight:600;">Event List</a>
+      <a th:href="@{/admin/organizer/add}" style="color:#fff;text-decoration:none;font-weight:600;">Event Add</a>
+    </nav>
     <form th:action="@{/logout}" method="post" style="display:inline">
       <button type="submit" class="btn btn--ghost">
         <i class="ri-logout-box-r-line"></i> Logout
@@ -163,69 +167,43 @@
 
   </header>
   <div class="container">
-    <div id="list"></div>
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(events)}" class="empty">
+      You haven’t created any events yet.<br /><br />
+      <a th:href="@{/admin/organizer/add}" class="btn">
+        <i class="ri-add-line"></i> Create your first event
+      </a>
+    </div>
+
+    <!-- Events Grid -->
+    <div th:if="${!#lists.isEmpty(events)}" class="grid">
+      <div th:each="ev : ${events}" class="card">
+        <h3 th:text="${ev.title}">Event Title</h3>
+        <div class="meta">
+          <span th:text="${ev.dateTime}">Event Date</span> •
+          <span th:text="${ev.location}">Event Location</span>
+        </div>
+
+        <!-- Status Badge -->
+        <span th:class="'status s-' + ${ev.status}" th:text="${ev.status}">STATUS</span>
+
+        <!-- Actions -->
+        <div class="actions">
+          <a th:href="@{/admin/organizer/edit/{id}(id=${ev.id})}" class="btn btn--ghost">
+            <i class="ri-edit-2-line"></i> Edit
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Event Button -->
+    <div th:if="${!#lists.isEmpty(events)}" style="margin-top:20px">
+      <a th:href="@{/admin/organizer/add}" class="btn">
+        <i class="ri-add-line"></i> Add Event
+      </a>
+    </div>
   </div>
 
-  <script>
-    // ---- auth guard (Organizer only) ----
-    const user = JSON.parse(localStorage.getItem("currentUser") || "null");
-    if (!user || user.role !== "organizer") {
-      alert("Please sign in as Organizer.");
-      location.href = "login.html";
-    }
-
-    function loadAll() { return JSON.parse(localStorage.getItem("adminEvents") || "[]"); }
-    function saveAll(list) { localStorage.setItem("adminEvents", JSON.stringify(list)); }
-
-    function goCreate() {
-      location.href = "organizer.html";
-    }
-    function editEvent(id) {
-      localStorage.setItem("adminEditEventId", id);
-      location.href = "organizer.html";
-    }
-
-    function statusBadge(s) {
-      s = (s || "DRAFT").toUpperCase();
-      return `<span class="status s-${s}">${s}</span>`;
-    }
-
-    function card(ev) {
-      const dateText = ev.date ? new Date(ev.date).toLocaleString() : "—";
-      return `
-        <div class="card">
-          <h3>${ev.title || "Untitled"}</h3>
-          <div class="meta">${dateText} • ${ev.location || "—"}</div>
-          ${statusBadge(ev.status)}
-          <div class="actions">
-            <button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function render() {
-      const all = loadAll();
-      const myEvents = all.filter(e => e.organizerId === user.id);
-      const listEl = document.getElementById("list");
-      if (myEvents.length === 0) {
-        listEl.innerHTML = `<div class="empty">
-          You haven’t created any events yet.<br/><br/>
-          <button class="btn" onclick="goCreate()"><i class="ri-add-line"></i> Create your first event</button>
-        </div>`;
-      } else {
-        listEl.innerHTML = `<div class="grid">${myEvents.map(card).join("")}</div>
-          <div style="margin-top:20px"><button class="btn" onclick="goCreate()"><i class="ri-add-line"></i> Add Event</button></div>`;
-      }
-    }
-
-    render();
-    function logout() {
-      localStorage.removeItem("currentUser");
-      alert("You have been logged out.");
-      location.href = "login.html";
-    }
-  </script>
 </body>
 
 </html>
