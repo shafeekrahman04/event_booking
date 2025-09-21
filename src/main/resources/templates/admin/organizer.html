@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -47,7 +47,7 @@
 <body>
 <header style="display:flex;justify-content:space-between;align-items:center;">
   <div>Admin / Organizer — EventX</div>
-  <button class="btn btn--ghost" onclick="logout()">
+  <button class="btn btn--ghost" th:href="@{/logout}">
     <i class="ri-logout-box-r-line"></i> Logout
   </button>
 </header>

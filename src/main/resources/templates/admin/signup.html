@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organizer Signup — EventX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #fff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #111827;
+      --radius: 16px;
+      --shadow: 0 14px 36px rgba(2, 8, 23, .08)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fafc, #eef2ff)
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px
+    }
+
+    .card {
+      width: min(880px, 94vw);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr
+    }
+
+    @media(max-width:900px) {
+      .card {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .left {
+      padding: 24px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px
+    }
+
+    h1 {
+      margin: 8px 0 6px
+    }
+
+    p.muted {
+      color: var(--muted);
+      margin: 0 0 16px
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #475569;
+      margin: 10px 0 6px
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none
+    }
+
+    input:focus {
+      box-shadow: 0 0 0 6px rgba(14, 165, 233, .15)
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center
+    }
+
+    .switch {
+      margin-top: 10px;
+      font-size: 14px
+    }
+
+    .switch a {
+      cursor: pointer;
+      font-weight: 800;
+      color: #111827;
+      text-decoration: none
+    }
+
+    .right {
+      background: radial-gradient(800px 300px at 30% -20%, rgba(109, 40, 217, .18), transparent 60%), radial-gradient(600px 200px at 80% 10%, rgba(14, 165, 233, .18), transparent 60%);
+      display: grid;
+      place-items: center;
+      padding: 20px
+    }
+
+    .banner {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      color: #111827
+    }
+
+    .banner h2 {
+      margin: 0 0 8px
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px
+    }
+
+    .sep {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 16px 0
+    }
+
+    .tips {
+      font-size: 12px;
+      color: #64748b
+    }
+
+    .link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: #111827;
+      font-weight: 800
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <!-- LEFT -->
+      <div class="left">
+        <div class="brand">
+          <svg viewBox="0 0 64 64">
+            <defs>
+              <linearGradient id="g">
+                <stop offset="0%" stop-color="#6d28d9" />
+                <stop offset="100%" stop-color="#0ea5e9" />
+              </linearGradient>
+            </defs>
+            <rect rx="14" ry="14" width="64" height="64" fill="url(#g)" />
+          </svg>
+          <div>Event<strong>X</strong></div>
+        </div>
+        <h1>Organizer sign up</h1>
+        <p class="muted">Create an organizer account to submit events for approval.</p>
+
+        <form th:action="@{/auth/admin/signup}" method="post" id="signupForm">
+          <div class="row">
+            <div>
+              <label>Name</label>
+              <input name="name" placeholder="Priya" required />
+            </div>
+            <div>
+              <label>Email</label>
+              <input type="email" name="email" placeholder="organizer@example.com" />
+            </div>
+          </div>
+          <label>Organizer Username</label>
+          <input name="username" type="text" required />
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Create a password" required />
+          <div style="margin-top:12px"><button class="btn" type="submit">Create organizer account</button></div>
+        </form>
+
+        <div class="sep"></div>
+        <p class="switch">Already have an account? <a th:href="@{/auth/admin/login}">Sign in</a></p>
+        <p class="hint">Public users don’t need an account. <a class="link" href="index.html"><i
+              class="ri-home-5-line"></i> Go to site</a></p>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right">
+        <div class="banner">
+          <h2>Manage events with confidence</h2>
+          <p>Create seat maps, submit for approval, and publish events once approved by Admin.</p>
+          <img src="https://images.unsplash.com/photo-1515165562835-c3b8c8f1571d?q=80&w=1200&auto=format&fit=crop"
+            style="width:100%;border-radius:14px;margin-top:12px" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

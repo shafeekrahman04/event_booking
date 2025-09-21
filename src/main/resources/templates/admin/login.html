@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -36,139 +36,40 @@
 </head>
 <body>
 <div class="wrap">
-    <div class="card">
-        <!-- LEFT: forms -->
-        <div class="left">
-            <div class="brand">
-                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect rx="14" ry="14" width="64" height="64" fill="url(#g)"/><g fill="#fff" opacity="0.95" transform="translate(12,14)"><path d="M10 0h8l-10 24H0L10 0zM28 0h8L26 24h-8L28 0z"/></g></svg>
-                <div>Event<strong>X</strong></div>
-            </div>
-            <h1 id="formTitle">Sign in</h1>
-            <p class="muted" id="formDesc">Sign in with your email and password.</p>
+  <div class="card">
+    <!-- LEFT -->
+    <div class="left">
+      <div class="brand">
+        <svg viewBox="0 0 64 64"><defs><linearGradient id="g"><stop offset="0%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect rx="14" ry="14" width="64" height="64" fill="url(#g)"/></svg>
+        <div>Event<strong>X</strong></div>
+      </div>
+      <h1>Sign in</h1>
+      <p class="muted">Sign in with your email and password.</p>
 
-            <!-- LOGIN FORM -->
-            <form id="loginForm">
-                <label>Email</label>
-                <input id="loginEmail" type="email" placeholder="you@example.com" required/>
-                <label>Password</label>
-                <input id="loginPass" type="password" placeholder="••••••••" required/>
-                <div style="margin-top:12px"><button class="btn" type="submit"><i class="ri-login-circle-line"></i> Sign in</button></div>
-            </form>
+      <form th:action="@{/admin/login}" method="post" id="loginForm">
+        <label>Username</label>
+        <input id="username" name="username" type="text" required/>
+        <label>Password</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required/>
+        <div style="margin-top:12px"><button class="btn" type="submit"><i class="ri-login-circle-line"></i> Sign in</button></div>
+      </form>
 
-            <!-- SIGNUP FORM (organizer only) -->
-            <form id="signupForm" style="display:none">
-                <div class="row">
-                    <div>
-                        <label>First name</label>
-                        <input id="firstName" placeholder="Priya"/>
-                    </div>
-                    <div>
-                        <label>Last name</label>
-                        <input id="lastName" placeholder="Sharma"/>
-                    </div>
-                </div>
-                <label>Organizer email</label>
-                <input id="signupEmail" type="email" placeholder="organizer@example.com" required/>
-                <label>Password</label>
-                <input id="signupPass" type="password" placeholder="Create a password" required/>
-                <div style="margin-top:12px"><button class="btn" type="submit"><i class="ri-user-add-line"></i> Create organizer account</button></div>
-            </form>
-
-            <div class="sep"></div>
-            <div class="switch">
-                <span id="toSignup">New organizer? <a>Sign up</a></span>
-                <span id="toLogin" style="display:none">Already have an account? <a>Sign in</a></span>
-            </div>
-
-            <p class="hint">Public users don’t need an account. <a class="link" href="index.html"><i class="ri-home-5-line"></i> Go to site</a></p>
-            <p class="tips">Demo admin (seeded automatically): <b>admin@eventx.com</b> / <b>admin123</b></p>
-        </div>
-
-        <!-- RIGHT: banner -->
-        <div class="right">
-            <div class="banner">
-                <h2>Manage events with confidence</h2>
-                <p>Create seat maps, submit for approval, and publish events once approved by Admin.</p>
-                <img alt="Events" src="https://images.unsplash.com/photo-1515165562835-c3b8c8f1571d?q=80&w=1200&auto=format&fit=crop" style="width:100%;border-radius:14px;margin-top:12px"/>
-            </div>
-        </div>
+      <div class="sep"></div>
+      <p class="switch">New organizer? <a th:href="@{/auth/admin/signup}">Sign up</a></p>
+      <p class="hint">Public users don’t need an account. <a class="link" href="index.html"><i class="ri-home-5-line"></i> Go to site</a></p>
+      <p class="tips">Demo admin: <b>admin@eventx.com</b> / <b>admin123</b></p>
     </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <div class="banner">
+        <h2>Manage events with confidence</h2>
+        <p>Create seat maps, submit for approval, and publish events once approved by Admin.</p>
+        <img src="https://images.unsplash.com/photo-1515165562835-c3b8c8f1571d?q=80&w=1200&auto=format&fit=crop" style="width:100%;border-radius:14px;margin-top:12px"/>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-    // --- auth system ---
-    function loadUsers(){ return JSON.parse(localStorage.getItem("users")||"[]"); }
-    function saveUsers(list){ localStorage.setItem("users", JSON.stringify(list)); }
-    function setCurrent(user){ localStorage.setItem("currentUser", JSON.stringify(user)); }
-    function getCurrent(){ return JSON.parse(localStorage.getItem("currentUser")||"null"); }
-
-    // seed default admin
-    (function seedAdmin(){
-      const users = loadUsers();
-      if(!users.some(u=>u.role==="admin")){
-        users.push({ id:"U-ADMIN", email:"admin@eventx.com", pass:"admin123", role:"admin", name:"Administrator" });
-        saveUsers(users);
-      }
-    })();
-
-    // UI toggles
-    const loginForm = document.getElementById("loginForm");
-    const signupForm = document.getElementById("signupForm");
-    const toSignup = document.getElementById("toSignup");
-    const toLogin = document.getElementById("toLogin");
-
-    toSignup.addEventListener("click", ()=>{
-      loginForm.style.display = "none";
-      signupForm.style.display = "block";
-      toSignup.style.display = "none";
-      toLogin.style.display = "inline";
-      document.getElementById("formTitle").textContent = "Organizer sign up";
-      document.getElementById("formDesc").textContent = "Create an organizer account to submit events for approval.";
-    });
-    toLogin.addEventListener("click", ()=>{
-      signupForm.style.display = "none";
-      loginForm.style.display = "block";
-      toLogin.style.display = "none";
-      toSignup.style.display = "inline";
-      document.getElementById("formTitle").textContent = "Sign in";
-      document.getElementById("formDesc").textContent = "Sign in with your email and password.";
-    });
-
-    // sign in
-    loginForm.addEventListener("submit", (e)=>{
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-      const pass  = document.getElementById("loginPass").value;
-      const user = loadUsers().find(u => u.email.toLowerCase()===email && u.pass===pass);
-      if(!user){ alert("Invalid credentials."); return; }
-      setCurrent(user);
-     if(user.role === "admin") location.href = "events-admin.html";
-else location.href = "organizer-events.html";  // 👈 instead of organizer.html
-
-    });
-
-    // sign up (organizer only)
-    signupForm.addEventListener("submit",(e)=>{
-      e.preventDefault();
-      const first = document.getElementById("firstName").value.trim();
-      const last  = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("signupEmail").value.trim().toLowerCase();
-      const pass  = document.getElementById("signupPass").value;
-      let users = loadUsers();
-      if(users.some(u=>u.email.toLowerCase()===email)){ alert("Email already registered."); return; }
-      const user = { id:"U-"+Math.random().toString(36).slice(2,8).toUpperCase(), email, pass, role:"organizer", name: (first+" "+last).trim()||"Organizer" };
-      users.push(user); saveUsers(users); setCurrent(user);
-      alert("Organizer account created. Welcome!");
-      location.href = "organizer-events.html";
-    });
-
-    // auto-redirect if already signed in
-    (function autoRedirect(){
-      const u = getCurrent();
-      if(!u) return;
-      if(u.role==="admin") location.href = "events-admin.html";
-      if(u.role==="organizer") location.href = "organizer.html";
-    })();
-</script>
 </body>
 </html>
