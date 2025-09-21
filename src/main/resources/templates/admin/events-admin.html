@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin • Events — EventX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#f6f7fb; --panel:#fff; --text:#0f172a; --muted:#6b7280; --border:#e5e7eb;
+          --primary:#111827; --shadow:0 12px 32px rgba(2,8,23,.06); --radius:14px;
+          --pend:#f59e0b; --appr:#16a34a; --publ:#2563eb; --rej:#ef4444; --arch:#6b7280;
+        }
+        *{box-sizing:border-box}
+        body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+        header{background:var(--primary);color:#fff;padding:16px;text-align:center;font-weight:900}
+        .container{max-width:1100px;margin:22px auto;padding:0 16px}
+
+        .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+        .input{flex:1;min-width:260px;position:relative}
+        .input i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8}
+        .input input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--border);border-radius:999px;outline:none}
+        .input input:focus{box-shadow:0 0 0 6px rgba(14,165,233,.15)}
+        .btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+        .btn--ghost{background:#fff;color:var(--primary);border:1px solid var(--border)}
+        .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+        .tab{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:700;font-size:13px;color:#111827}
+        .tab.active{background:#111827;color:#fff}
+
+        .statbar{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 16px}
+        .stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-weight:800;box-shadow:var(--shadow)}
+
+        .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+        @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:640px){.grid{grid-template-columns:1fr}}
+        .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+        .thumb{position:relative}
+        .thumb img{width:100%;height:160px;object-fit:cover;display:block}
+        .badge{position:absolute;left:10px;bottom:10px;background:rgba(17,24,39,.85);color:#fff;padding:4px 10px;border-radius:999px;font-size:12px}
+        .inner{padding:14px}
+        .title{font-weight:900;margin:0 0 4px}
+        .meta{color:var(--muted);font-size:13px}
+        .prices{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+        .pill{display:inline-flex;gap:6px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:6px 10px;font-size:12px}
+        .status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px}
+        .s-PENDING{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+        .s-APPROVED{background:#dcfce7;color:#166534;border:1px solid #86efac}
+        .s-PUBLISHED{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+        .s-REJECTED{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+        .s-ARCHIVED{background:#e5e7eb;color:#374151;border:1px solid #cbd5e1}
+
+        .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+        .empty{background:#fff;border:1px dashed var(--border);border-radius:12px;padding:20px;text-align:center;color:var(--muted)}
+        a.link{color:var(--primary);text-decoration:none;font-weight:700}
+    </style>
+</head>
+<body>
+<header>Admin • Events</header>
+
+<div class="container">
+    <div class="toolbar">
+        <div class="input"><i class="ri-search-line"></i><input id="search" placeholder="Search by title or venue…"/></div>
+        <button class="btn btn--ghost" onclick="logout()"><i class="ri-logout-box-r-line"></i> Logout</button>
+
+    </div>
+
+    <div class="tabs" id="tabs">
+        <button class="tab active" data-f="ALL">All</button>
+        <button class="tab" data-f="PENDING">Pending</button>
+        <button class="tab" data-f="APPROVED">Approved</button>
+        <button class="tab" data-f="PUBLISHED">Published</button>
+        <button class="tab" data-f="REJECTED">Rejected</button>
+        <button class="tab" data-f="ARCHIVED">Archived</button>
+    </div>
+
+    <div class="statbar">
+        <div class="stat">Total: <span id="statTotal">0</span></div>
+        <div class="stat">Pending: <span id="statPending">0</span></div>
+        <div class="stat">Approved: <span id="statApproved">0</span></div>
+        <div class="stat">Published: <span id="statPublished">0</span></div>
+    </div>
+
+    <div id="list" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">
+        No events added yet.
+    </div>
+</div>
+
+<script>
+    // ---- auth guard for Admin ----
+ (function guard(){
+   const u = JSON.parse(localStorage.getItem("currentUser")||"null");
+   if(!u || u.role!=="admin"){
+     alert("Please sign in as Admin.");
+     location.href = "login.html";
+   }
+ })();
+
+ function logout(){
+   localStorage.removeItem("currentUser");
+   location.href = "login.html";
+ }
+   // ---------- storage helpers ----------
+   const loadAll = () => JSON.parse(localStorage.getItem("adminEvents") || "[]");
+   const saveAll = (list) => localStorage.setItem("adminEvents", JSON.stringify(list));
+   const loadActiveArr = () => JSON.parse(localStorage.getItem("adminActiveEvents") || "[]");
+   const saveActiveArr = (arr) => localStorage.setItem("adminActiveEvents", JSON.stringify(arr));
+
+   // migrate legacy single active -> array
+   (function migrateSingleActive(){
+     const single = localStorage.getItem("adminActiveEvent");
+     if(single && !localStorage.getItem("adminActiveEvents")){
+       saveActiveArr([JSON.parse(single)]);
+       localStorage.removeItem("adminActiveEvent");
+     }
+   })();
+
+   // ensure every event has a status (default DRAFT)
+   function normalize(list){
+     return list.map(e => ({ status:"DRAFT", ...e }));
+   }
+
+   // ---------- navigation ----------
+   function goCreate(){ location.href = "organizer.html"; }
+   function editEvent(id){ localStorage.setItem("adminEditEventId", id); location.href = "organizer.html"; }
+
+   // ---------- filtering & search ----------
+   const tabs = document.getElementById("tabs");
+   const search = document.getElementById("search");
+   let currentFilter = "ALL";
+   tabs.querySelectorAll(".tab").forEach(t=>{
+     t.addEventListener("click", ()=>{
+       tabs.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+       t.classList.add("active");
+       currentFilter = t.dataset.f;
+       render();
+     });
+   });
+   search.addEventListener("input", render);
+
+   // ---------- actions (status transitions) ----------
+   function updateStatus(id, newStatus, extra={}){
+     let all = normalize(loadAll());
+     const idx = all.findIndex(e => e.id === id);
+     if(idx>-1){
+       all[idx] = { ...all[idx], status:newStatus, ...extra };
+       saveAll(all);
+     }
+     render();
+   }
+
+   function approveEvent(id){
+     updateStatus(id,"APPROVED",{approvedAt: Date.now(), rejectionReason:""});
+     alert("Event approved.");
+   }
+   function rejectEvent(id){
+     const reason = prompt("Enter rejection reason:");
+     updateStatus(id,"REJECTED",{rejectedAt: Date.now(), rejectionReason: reason || ""});
+     alert("Event rejected.");
+   }
+   function publishEvent(id){
+     let all = normalize(loadAll());
+     const ev = all.find(e=>e.id===id);
+     if(!ev) return alert("Event not found");
+     updateStatus(id,"PUBLISHED",{publishedAt: Date.now()});
+     let active = loadActiveArr();
+     if(!active.some(a=>a.id===id)) active.push(ev);
+     saveActiveArr(active);
+     alert("Event published.");
+   }
+   function unpublishEvent(id){
+     updateStatus(id,"APPROVED");
+     let active = loadActiveArr().filter(e=>e.id!==id);
+     saveActiveArr(active);
+     alert("Event unpublished.");
+   }
+   function archiveEvent(id){
+     updateStatus(id,"ARCHIVED",{archivedAt: Date.now()});
+     let active = loadActiveArr().filter(e=>e.id!==id);
+     saveActiveArr(active);
+     alert("Event archived.");
+   }
+   function duplicateEvent(id){
+     let all = normalize(loadAll());
+     const src = all.find(e=>e.id===id);
+     if(!src) return alert("Event not found");
+     const clone = JSON.parse(JSON.stringify(src));
+     clone.id = "ADM-" + Math.random().toString(36).slice(2,8).toUpperCase();
+     clone.title = (clone.title || "Untitled") + " (Copy)";
+     clone.status = "DRAFT";
+     delete clone.approvedAt; delete clone.publishedAt; delete clone.rejectedAt; delete clone.archivedAt; delete clone.rejectionReason;
+     all.push(clone);
+     saveAll(all);
+     render();
+     alert("Event duplicated.");
+   }
+   function deleteEvent(id){
+     if(!confirm("Delete this event? This cannot be undone.")) return;
+     let all = loadAll().filter(e=>e.id!==id);
+     saveAll(all);
+     saveActiveArr(loadActiveArr().filter(e=>e.id!==id));
+     render();
+   }
+
+   // ---------- UI render ----------
+   const listEl = document.getElementById("list");
+   const emptyEl = document.getElementById("empty");
+   const statTotal = document.getElementById("statTotal");
+   const statPending = document.getElementById("statPending");
+   const statApproved = document.getElementById("statApproved");
+   const statPublished = document.getElementById("statPublished");
+
+   function statusBadge(status){
+     const s = (status || "DRAFT").toUpperCase();
+     const cls = "status s-" + s;
+     return `<span class="${cls}">${s}</span>`;
+   }
+
+   function actionsFor(ev){
+     const s = (ev.status || "DRAFT").toUpperCase();
+     switch(s){
+       case "DRAFT":
+         return `<button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit</button>`;
+       case "PENDING":
+         return `
+           <button class="btn" onclick='approveEvent("${ev.id}")'><i class="ri-check-line"></i> Approve</button>
+           <button class="btn btn--ghost" onclick='rejectEvent("${ev.id}")'><i class="ri-close-line"></i> Reject</button>
+           <button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit</button>
+         `;
+       case "APPROVED":
+         return `
+           <button class="btn" onclick='publishEvent("${ev.id}")'><i class="ri-upload-2-line"></i> Publish</button>
+           <button class="btn btn--ghost" onclick='rejectEvent("${ev.id}")'><i class="ri-close-line"></i> Reject</button>
+           <button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit</button>
+         `;
+       case "PUBLISHED":
+         return `
+           <button class="btn btn--ghost" onclick='unpublishEvent("${ev.id}")'><i class="ri-eye-off-line"></i> Unpublish</button>
+           <button class="btn btn--ghost" onclick='archiveEvent("${ev.id}")'><i class="ri-archive-line"></i> Archive</button>
+         `;
+       case "REJECTED":
+         return `
+           <button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit & Resubmit</button>
+         `;
+       case "ARCHIVED":
+         return `
+           <button class="btn btn--ghost" onclick='duplicateEvent("${ev.id}")'><i class="ri-file-copy-line"></i> Duplicate</button>
+         `;
+       default:
+         return `<span class="muted">${s}</span>`;
+     }
+   }
+
+   function card(ev){
+     const vip = ev.basePrices?.VIP ?? 0, prem = ev.basePrices?.PREMIUM ?? 0, norm = ev.basePrices?.REGULAR ?? 0;
+     const dateText = ev.date ? new Date(ev.date).toLocaleString() : "—";
+     const rej = ev.rejectionReason ? `<div class="meta">Reason: ${ev.rejectionReason}</div>` : "";
+     return `
+       <article class="card">
+         <div class="thumb">
+           <img src="${ev.image}" alt="${ev.title}">
+           <div class="badge">★ ${ev.rating ?? "—"}</div>
+         </div>
+         <div class="inner">
+           <div class="title">${ev.title}</div>
+           <div class="meta">${dateText} • ${ev.location || "—"}</div>
+           <div style="margin-top:6px">${statusBadge(ev.status)}</div>
+           ${rej}
+           <div class="prices">
+             <span class="pill">VIP ₹${vip}</span>
+             <span class="pill">Premium ₹${prem}</span>
+             <span class="pill">Normal ₹${norm}</span>
+           </div>
+           <div class="actions">
+             ${actionsFor(ev)}
+             <button class="btn btn--ghost" onclick='duplicateEvent("${ev.id}")'><i class="ri-file-copy-line"></i> Duplicate</button>
+             <button class="btn btn--ghost" onclick='deleteEvent("${ev.id}")'><i class="ri-delete-bin-6-line"></i> Delete</button>
+           </div>
+         </div>
+       </article>
+     `;
+   }
+
+   function render(){
+     // load + normalize
+     let all = normalize(loadAll());
+
+     // stats
+     statTotal.textContent = all.length;
+     statPending.textContent = all.filter(e=>e.status==="PENDING").length;
+     statApproved.textContent = all.filter(e=>e.status==="APPROVED").length;
+     statPublished.textContent = all.filter(e=>e.status==="PUBLISHED").length;
+
+     // filter + search
+     const term = (search.value || "").toLowerCase();
+     let filtered = all.filter(e =>
+       (!term || (e.title||"").toLowerCase().includes(term) || (e.location||"").toLowerCase().includes(term))
+     );
+     if(currentFilter !== "ALL"){
+       filtered = filtered.filter(e => (e.status||"DRAFT").toUpperCase() === currentFilter);
+     }
+
+     // render
+     if(filtered.length === 0){
+       listEl.innerHTML = "";
+       emptyEl.style.display = "block";
+     } else {
+       emptyEl.style.display = "none";
+       listEl.innerHTML = filtered.map(card).join("");
+     }
+
+     // persist normalization (adds status to old items once)
+     saveAll(all);
+   }
+
+   // init
+   render();
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sign in — EventX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root{--bg:#f6f7fb;--panel:#fff;--text:#0f172a;--muted:#6b7280;--border:#e5e7eb;--primary:#111827;--radius:16px;--shadow:0 14px 36px rgba(2,8,23,.08)}
+        *{box-sizing:border-box}
+        body{margin:0;font-family:'Inter',sans-serif;background:linear-gradient(180deg,#f8fafc, #eef2ff)}
+        .wrap{min-height:100vh;display:grid;place-items:center;padding:24px}
+        .card{width:min(880px,94vw);background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1.1fr 1fr}
+        @media(max-width:900px){.card{grid-template-columns:1fr}}
+        .left{padding:24px}
+        .brand{display:flex;align-items:center;gap:10px;font-weight:900}
+        .brand svg{width:28px;height:28px}
+        h1{margin:8px 0 6px}
+        p.muted{color:var(--muted);margin:0 0 16px}
+        label{display:block;font-size:13px;color:#475569;margin:10px 0 6px}
+        input{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;outline:none}
+        input:focus{box-shadow:0 0 0 6px rgba(14,165,233,.15)}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;width:100%;justify-content:center}
+        .switch{margin-top:10px;font-size:14px}
+        .switch a{cursor:pointer;font-weight:800;color:#111827;text-decoration:none}
+        .right{background:radial-gradient(800px 300px at 30% -20%, rgba(109,40,217,.18), transparent 60%), radial-gradient(600px 200px at 80% 10%, rgba(14,165,233,.18), transparent 60%);display:grid;place-items:center;padding:20px}
+        .banner{width:100%;max-width:420px;text-align:center;color:#111827}
+        .banner h2{margin:0 0 8px}
+        .hint{font-size:12px;color:#64748b;margin-top:8px}
+        .sep{height:1px;background:#e5e7eb;margin:16px 0}
+        .tips{font-size:12px;color:#64748b}
+        .link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#111827;font-weight:800}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <!-- LEFT: forms -->
+        <div class="left">
+            <div class="brand">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect rx="14" ry="14" width="64" height="64" fill="url(#g)"/><g fill="#fff" opacity="0.95" transform="translate(12,14)"><path d="M10 0h8l-10 24H0L10 0zM28 0h8L26 24h-8L28 0z"/></g></svg>
+                <div>Event<strong>X</strong></div>
+            </div>
+            <h1 id="formTitle">Sign in</h1>
+            <p class="muted" id="formDesc">Sign in with your email and password.</p>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+                <label>Email</label>
+                <input id="loginEmail" type="email" placeholder="you@example.com" required/>
+                <label>Password</label>
+                <input id="loginPass" type="password" placeholder="••••••••" required/>
+                <div style="margin-top:12px"><button class="btn" type="submit"><i class="ri-login-circle-line"></i> Sign in</button></div>
+            </form>
+
+            <!-- SIGNUP FORM (organizer only) -->
+            <form id="signupForm" style="display:none">
+                <div class="row">
+                    <div>
+                        <label>First name</label>
+                        <input id="firstName" placeholder="Priya"/>
+                    </div>
+                    <div>
+                        <label>Last name</label>
+                        <input id="lastName" placeholder="Sharma"/>
+                    </div>
+                </div>
+                <label>Organizer email</label>
+                <input id="signupEmail" type="email" placeholder="organizer@example.com" required/>
+                <label>Password</label>
+                <input id="signupPass" type="password" placeholder="Create a password" required/>
+                <div style="margin-top:12px"><button class="btn" type="submit"><i class="ri-user-add-line"></i> Create organizer account</button></div>
+            </form>
+
+            <div class="sep"></div>
+            <div class="switch">
+                <span id="toSignup">New organizer? <a>Sign up</a></span>
+                <span id="toLogin" style="display:none">Already have an account? <a>Sign in</a></span>
+            </div>
+
+            <p class="hint">Public users don’t need an account. <a class="link" href="index.html"><i class="ri-home-5-line"></i> Go to site</a></p>
+            <p class="tips">Demo admin (seeded automatically): <b>admin@eventx.com</b> / <b>admin123</b></p>
+        </div>
+
+        <!-- RIGHT: banner -->
+        <div class="right">
+            <div class="banner">
+                <h2>Manage events with confidence</h2>
+                <p>Create seat maps, submit for approval, and publish events once approved by Admin.</p>
+                <img alt="Events" src="https://images.unsplash.com/photo-1515165562835-c3b8c8f1571d?q=80&w=1200&auto=format&fit=crop" style="width:100%;border-radius:14px;margin-top:12px"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- auth system ---
+    function loadUsers(){ return JSON.parse(localStorage.getItem("users")||"[]"); }
+    function saveUsers(list){ localStorage.setItem("users", JSON.stringify(list)); }
+    function setCurrent(user){ localStorage.setItem("currentUser", JSON.stringify(user)); }
+    function getCurrent(){ return JSON.parse(localStorage.getItem("currentUser")||"null"); }
+
+    // seed default admin
+    (function seedAdmin(){
+      const users = loadUsers();
+      if(!users.some(u=>u.role==="admin")){
+        users.push({ id:"U-ADMIN", email:"admin@eventx.com", pass:"admin123", role:"admin", name:"Administrator" });
+        saveUsers(users);
+      }
+    })();
+
+    // UI toggles
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const toSignup = document.getElementById("toSignup");
+    const toLogin = document.getElementById("toLogin");
+
+    toSignup.addEventListener("click", ()=>{
+      loginForm.style.display = "none";
+      signupForm.style.display = "block";
+      toSignup.style.display = "none";
+      toLogin.style.display = "inline";
+      document.getElementById("formTitle").textContent = "Organizer sign up";
+      document.getElementById("formDesc").textContent = "Create an organizer account to submit events for approval.";
+    });
+    toLogin.addEventListener("click", ()=>{
+      signupForm.style.display = "none";
+      loginForm.style.display = "block";
+      toLogin.style.display = "none";
+      toSignup.style.display = "inline";
+      document.getElementById("formTitle").textContent = "Sign in";
+      document.getElementById("formDesc").textContent = "Sign in with your email and password.";
+    });
+
+    // sign in
+    loginForm.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const pass  = document.getElementById("loginPass").value;
+      const user = loadUsers().find(u => u.email.toLowerCase()===email && u.pass===pass);
+      if(!user){ alert("Invalid credentials."); return; }
+      setCurrent(user);
+     if(user.role === "admin") location.href = "events-admin.html";
+else location.href = "organizer-events.html";  // 👈 instead of organizer.html
+
+    });
+
+    // sign up (organizer only)
+    signupForm.addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const first = document.getElementById("firstName").value.trim();
+      const last  = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+      const pass  = document.getElementById("signupPass").value;
+      let users = loadUsers();
+      if(users.some(u=>u.email.toLowerCase()===email)){ alert("Email already registered."); return; }
+      const user = { id:"U-"+Math.random().toString(36).slice(2,8).toUpperCase(), email, pass, role:"organizer", name: (first+" "+last).trim()||"Organizer" };
+      users.push(user); saveUsers(users); setCurrent(user);
+      alert("Organizer account created. Welcome!");
+      location.href = "organizer-events.html";
+    });
+
+    // auto-redirect if already signed in
+    (function autoRedirect(){
+      const u = getCurrent();
+      if(!u) return;
+      if(u.role==="admin") location.href = "events-admin.html";
+      if(u.role==="organizer") location.href = "organizer.html";
+    })();
+</script>
+</body>
+</html>

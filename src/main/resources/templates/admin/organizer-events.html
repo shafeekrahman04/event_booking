@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Organizer • My Events — EventX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#f6f7fb;--panel:#fff;--text:#0f172a;--muted:#6b7280;--border:#e5e7eb;
+          --primary:#111827;--shadow:0 12px 32px rgba(2,8,23,.06);--radius:14px;
+        }
+        *{box-sizing:border-box}
+        body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+        header{background:var(--primary);color:#fff;padding:16px;text-align:center;font-weight:900}
+        .container{max-width:1000px;margin:22px auto;padding:0 16px}
+        .btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+        .btn--ghost{background:#fff;color:var(--primary);border:1px solid var(--border)}
+        .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+        @media(max-width:800px){.grid{grid-template-columns:1fr}}
+        .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;padding:14px}
+        .card h3{margin:0 0 6px}
+        .meta{font-size:13px;color:var(--muted)}
+        .status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;margin-top:6px}
+        .s-DRAFT{background:#f3f4f6;color:#374151}
+        .s-PENDING{background:#fef3c7;color:#92400e}
+        .s-APPROVED{background:#dcfce7;color:#166534}
+        .s-PUBLISHED{background:#dbeafe;color:#1e40af}
+        .s-REJECTED{background:#fee2e2;color:#991b1b}
+        .s-ARCHIVED{background:#e5e7eb;color:#374151}
+        .actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+        .empty{background:#fff;border:1px dashed var(--border);border-radius:12px;padding:20px;text-align:center;color:var(--muted)}
+    </style>
+</head>
+<body>
+<header style="display:flex;justify-content:space-between;align-items:center;">
+  <div>My Events</div>
+  <button class="btn btn--ghost" onclick="logout()">
+    <i class="ri-logout-box-r-line"></i> Logout
+  </button>
+</header>
+<div class="container">
+    <div id="list"></div>
+</div>
+
+<script>
+    // ---- auth guard (Organizer only) ----
+    const user = JSON.parse(localStorage.getItem("currentUser")||"null");
+    if(!user || user.role!=="organizer"){
+      alert("Please sign in as Organizer.");
+      location.href = "login.html";
+    }
+
+    function loadAll(){ return JSON.parse(localStorage.getItem("adminEvents")||"[]"); }
+    function saveAll(list){ localStorage.setItem("adminEvents", JSON.stringify(list)); }
+
+    function goCreate(){
+      location.href = "organizer.html";
+    }
+    function editEvent(id){
+      localStorage.setItem("adminEditEventId", id);
+      location.href = "organizer.html";
+    }
+
+    function statusBadge(s){
+      s = (s||"DRAFT").toUpperCase();
+      return `<span class="status s-${s}">${s}</span>`;
+    }
+
+    function card(ev){
+      const dateText = ev.date ? new Date(ev.date).toLocaleString() : "—";
+      return `
+        <div class="card">
+          <h3>${ev.title||"Untitled"}</h3>
+          <div class="meta">${dateText} • ${ev.location||"—"}</div>
+          ${statusBadge(ev.status)}
+          <div class="actions">
+            <button class="btn btn--ghost" onclick='editEvent("${ev.id}")'><i class="ri-edit-2-line"></i> Edit</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function render(){
+      const all = loadAll();
+      const myEvents = all.filter(e=> e.organizerId===user.id);
+      const listEl = document.getElementById("list");
+      if(myEvents.length===0){
+        listEl.innerHTML = `<div class="empty">
+          You haven’t created any events yet.<br/><br/>
+          <button class="btn" onclick="goCreate()"><i class="ri-add-line"></i> Create your first event</button>
+        </div>`;
+      } else {
+        listEl.innerHTML = `<div class="grid">${myEvents.map(card).join("")}</div>
+          <div style="margin-top:20px"><button class="btn" onclick="goCreate()"><i class="ri-add-line"></i> Add Event</button></div>`;
+      }
+    }
+
+    render();
+    function logout(){
+  localStorage.removeItem("currentUser");
+  alert("You have been logged out.");
+  location.href = "login.html";
+}
+</script>
+</body>
+</html>

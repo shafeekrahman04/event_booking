@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Confirmed — EventX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f5f7fa;color:#111827}
+    header{background:#16a34a;color:#fff;padding:16px;text-align:center;font-weight:900}
+    .container{max-width:800px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 6px 24px rgba(2,8,23,.06)}
+    .inner{padding:18px}
+    h1{margin:0 0 8px}
+    .muted{color:#6b7280}
+    .qrbox{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .qr{width:160px;height:160px;border-radius:12px;border:1px solid #e5e7eb;background:#fafafa;display:grid;place-items:center}
+    .row{display:flex;gap:18px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid #e2e8f0}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:#111827;color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn--ghost{background:#fff;color:#111827;border:1px solid #e5e7eb}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    @media print {.actions{display:none}}
+    @media (max-width: 600px){
+  .seat-grid{grid-template-columns:repeat(5,35px);}
+  .grid{grid-template-columns:1fr;}
+  .event-mini{flex-direction:column;align-items:flex-start;}
+  .qrbox{flex-direction:column;}
+}
+
+  </style>
+</head>
+<body>
+<header><i class="ri-check-double-line"></i> Booking Confirmed</header>
+
+<div class="container">
+  <div class="card">
+    <div class="inner">
+      <h1 id="bkId">Ref —</h1>
+      <div class="muted" id="bkMeta">Event • Date • Venue</div>
+
+      <div class="qrbox" style="margin:16px 0">
+        <div class="qr"><img id="qrImg" alt="QR" style="width:150px;height:150px"/></div>
+        <div>
+          <div><strong>Name:</strong> <span id="bkName"></span></div>
+          <div><strong>Email:</strong> <span id="bkEmail"></span></div>
+          <div><strong>Seats:</strong> <span id="bkSeats"></span></div>
+          <div style="margin-top:6px" class="row">
+            <span class="pill"><i class="ri-qr-code-line"></i> Show this at entry</span>
+            <span class="pill"><i class="ri-shield-check-line"></i> Verified ticket</span>
+          </div>
+          <div class="actions">
+            <button class="btn btn--ghost" onclick="shareTicket()">
+              <i class="ri-share-forward-line"></i> Share Ticket
+            </button>
+            <button class="btn" onclick="window.print()"><i class="ri-printer-line"></i> Print Ticket</button>
+            <button class="btn btn--ghost" onclick="goHome()"><i class="ri-home-5-line"></i> Back to Home</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:8px">
+        <div class="muted">Paid: <strong id="bkTotal">₹0</strong> (incl. fees)</div>
+        <div class="muted">Timestamp: <span id="bkTs">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const booking = JSON.parse(localStorage.getItem("latestBooking") || "null");
+  if(!booking){
+    alert("No booking found. Please select seats and checkout again.");
+    location.href = "event.html";
+  } else {
+    document.getElementById("bkId").textContent = booking.id;
+    document.getElementById("bkName").textContent = booking.name;
+    document.getElementById("bkEmail").textContent = booking.email;
+    document.getElementById("bkSeats").textContent = booking.seats.join(", ");
+    document.getElementById("bkTotal").textContent = "₹" + booking.total;
+    document.getElementById("bkMeta").textContent = `${booking.event.title} • ${booking.event.date} • ${booking.event.venue}`;
+    document.getElementById("bkTs").textContent = new Date(booking.ts).toLocaleString();
+
+    // Generate QR using an image API (keeps it simple for UI-only demo)
+    const payload = encodeURIComponent(JSON.stringify({
+      id: booking.id,
+      seats: booking.seats,
+      total: booking.total,
+      ts: booking.ts
+    }));
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${payload}`;
+    document.getElementById("qrImg").src = qrUrl;
+  }
+
+  function goHome(){ location.href = "index.html"; }
+
+  function shareTicket(){
+  if(navigator.share){
+    navigator.share({
+      title: "My EventX Ticket",
+      text: `Booking ${booking.id}, Seats: ${booking.seats.join(", ")} (Paid ₹${booking.total})`,
+      url: location.href
+    });
+  } else {
+    alert("Sharing not supported on this device. You can copy the booking ID: " + booking.id);
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details — EventX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {margin:0;font-family:'Inter',sans-serif;background:#f9fafb;color:#111827;}
+        header{background:#111827;color:white;padding:16px;text-align:center;font-weight:700;}
+        .container{max-width:1000px;margin:20px auto;padding:0 20px;}
+        .event-hero img{width:100%;border-radius:12px;}
+        .event-info{margin:20px 0;}
+        .event-info h1{margin:0 0 10px;}
+        .badge{background:#eee;padding:5px 12px;border-radius:12px;font-size:13px;margin-right:8px;}
+        .seating{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.1);}
+        .seat-grid{display:grid;grid-template-columns:repeat(10,35px);gap:8px;justify-content:center;margin:20px 0;}
+        .seat{width:35px;height:35px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;}
+        .seat.vip{background:#c0392b;color:white;}
+        .seat.premium{background:#2980b9;color:white;}
+        .seat.normal{background:#27ae60;color:white;}
+        .seat.booked{background:#aaa !important;cursor:not-allowed;}
+        .seat.selected{outline:3px solid #000;}
+        .summary{margin-top:20px;text-align:center;}
+        .summary p{margin:8px 0;}
+        .btn{display:inline-block;padding:10px 18px;background:#111827;color:white;border-radius:8px;text-decoration:none;margin-top:10px;}
+        @media (max-width: 600px){
+  .seat-grid{grid-template-columns:repeat(5,35px);}
+  .grid{grid-template-columns:1fr;}
+  .event-mini{flex-direction:column;align-items:flex-start;}
+  .qrbox{flex-direction:column;}
+}
+
+    </style>
+</head>
+<body>
+
+<header>
+    🎶 Live Concert 2025
+</header>
+
+<div class="container">
+    <div class="event-hero">
+        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1400&auto=format&fit=crop" alt="Concert"/>
+    </div>
+    <div class="event-info">
+        <h1>Live Concert 2025</h1>
+        <p><span class="badge">Date: Sept 12, 2025</span> <span class="badge">Venue: City Auditorium</span></p>
+        <p>Enjoy an electrifying night of music with top artists performing live on stage. Limited VIP seats available!</p>
+    </div>
+
+    <div class="seating">
+        <h2>Select Your Seats</h2>
+        <p><strong>Categories:</strong>
+            <span class="badge" style="background:#c0392b;color:white;">VIP ₹1500</span>
+            <span class="badge" style="background:#2980b9;color:white;">Premium ₹1000</span>
+            <span class="badge" style="background:#27ae60;color:white;">Normal ₹500</span>
+        </p>
+
+        <div id="seatGrid" class="seat-grid"></div>
+
+        <div class="summary">
+            <p>Selected Seats: <span id="selected-seats">None</span></p>
+            <p>Total Price: ₹<span id="total-price">0</span></p>
+            <a class="btn" href="checkout.html" onclick="saveBooking()">Proceed to Checkout</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const prices = { VIP:1500, Premium:1000, Normal:500 };
+    let selectedSeats = [];
+    let totalPrice = 0;
+
+    const seatGrid = document.getElementById("seatGrid");
+    const categories = ["VIP","Premium","Normal"];
+    let seatCount = { VIP:10, Premium:20, Normal:30 }; // just demo counts
+
+    categories.forEach(cat=>{
+      for(let i=1;i<=seatCount[cat];i++){
+        const seat=document.createElement("div");
+        seat.classList.add("seat",cat.toLowerCase());
+        seat.innerText=i;
+        if(Math.random()<0.15){ // random booked
+          seat.classList.add("booked");
+        }
+        seat.addEventListener("click",()=>{
+          if(seat.classList.contains("booked")) return;
+          if(seat.classList.contains("selected")){
+            seat.classList.remove("selected");
+            selectedSeats=selectedSeats.filter(s=>s!==`${cat}-${i}`);
+            totalPrice-=prices[cat];
+          }else{
+            seat.classList.add("selected");
+            selectedSeats.push(`${cat}-${i}`);
+            totalPrice+=prices[cat];
+          }
+          document.getElementById("selected-seats").innerText=selectedSeats.length?selectedSeats.join(", "):"None";
+          document.getElementById("total-price").innerText=totalPrice;
+        });
+        seatGrid.appendChild(seat);
+      }
+    });
+
+    function saveBooking(){
+      localStorage.setItem("seats",JSON.stringify(selectedSeats));
+      localStorage.setItem("price",totalPrice);
+    }
+</script>
+</body>
+</html>
