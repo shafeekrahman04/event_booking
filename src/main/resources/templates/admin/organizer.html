@@ -1,380 +1,583 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Admin • EventX</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <style>
-        :root{--bg:#f5f7fa;--panel:#fff;--text:#0f172a;--muted:#6b7280;--border:#e5e7eb;--shadow:0 8px 28px rgba(2,8,23,.06);--radius:14px;--vip:#c0392b;--prem:#2980b9;--norm:#27ae60;--block:#9ca3af}
-        body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
-        header{background:#111827;color:#fff;padding:16px;text-align:center;font-weight:900}
-        .container{max-width:1100px;margin:22px auto;padding:0 16px}
-        .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
-        @media(max-width:1000px){.grid{grid-template-columns:1fr}}
-        .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-        .inner{padding:18px}
-        h2{margin:0 0 10px}
-        label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-        input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;outline:none}
-        input:focus,select:focus,textarea:focus{box-shadow:0 0 0 6px rgba(14,165,233,.15)}
-        .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .btn{display:inline-flex;align-items:center;gap:8px;background:#111827;color:#fff;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-        .btn--ghost{background:#fff;color:#111827;border:1px solid var(--border)}
-        .muted{color:var(--muted)}
-        .palette{display:flex;gap:8px;flex-wrap:wrap}
-        .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:700}
-        .pill.vip{background:var(--vip);color:#fff;border-color:var(--vip)}
-        .pill.prem{background:var(--prem);color:#fff;border-color:var(--prem)}
-        .pill.norm{background:var(--norm);color:#fff;border-color:var(--norm)}
-        .pill.block{background:#fff;color:#111827;border-color:var(--border)}
-        .pill.active{outline:3px solid rgba(17,24,39,.2)}
-        .seat-wrap{border:1px dashed var(--border);border-radius:12px;padding:12px}
-        .seat-grid{display:grid;gap:6px;justify-content:center}
-        .seat{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;cursor:pointer;user-select:none}
-        .seat.vip{background:var(--vip)}
-        .seat.premium{background:var(--prem)}
-        .seat.normal{background:var(--norm)}
-        .seat.blocked{background:var(--block)}
-        .seat.empty{background:#e5e7eb;color:#111827}
-        .legend{display:flex;gap:10px;flex-wrap:wrap}
-        .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px}
-        .legend .box{width:14px;height:14px;border-radius:4px;display:inline-block}
-        .bar{display:flex;gap:8px;flex-wrap:wrap}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin • EventX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #fff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 8px 28px rgba(2, 8, 23, .06);
+      --radius: 14px;
+      --vip: #c0392b;
+      --prem: #2980b9;
+      --norm: #27ae60;
+      --block: #9ca3af
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text)
+    }
+
+    header {
+      background: #111827;
+      color: #fff;
+      padding: 16px;
+      text-align: center;
+      font-weight: 900
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 22px auto;
+      padding: 0 16px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px
+    }
+
+    @media(max-width:1000px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow)
+    }
+
+    .inner {
+      padding: 18px
+    }
+
+    h2 {
+      margin: 0 0 10px
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 6px
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      box-shadow: 0 0 0 6px rgba(14, 165, 233, .15)
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #111827;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn--ghost {
+      background: #fff;
+      color: #111827;
+      border: 1px solid var(--border)
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .palette {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 700
+    }
+
+    .pill.vip {
+      background: var(--vip);
+      color: #fff;
+      border-color: var(--vip)
+    }
+
+    .pill.prem {
+      background: var(--prem);
+      color: #fff;
+      border-color: var(--prem)
+    }
+
+    .pill.norm {
+      background: var(--norm);
+      color: #fff;
+      border-color: var(--norm)
+    }
+
+    .pill.block {
+      background: #fff;
+      color: #111827;
+      border-color: var(--border)
+    }
+
+    .pill.active {
+      outline: 3px solid rgba(17, 24, 39, .2)
+    }
+
+    .seat-wrap {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px
+    }
+
+    .seat-grid {
+      display: grid;
+      gap: 6px;
+      justify-content: center
+    }
+
+    .seat {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      user-select: none
+    }
+
+    .seat.vip {
+      background: var(--vip)
+    }
+
+    .seat.premium {
+      background: var(--prem)
+    }
+
+    .seat.normal {
+      background: var(--norm)
+    }
+
+    .seat.blocked {
+      background: var(--block)
+    }
+
+    .seat.empty {
+      background: #e5e7eb;
+      color: #111827
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px
+    }
+
+    .legend .box {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      display: inline-block
+    }
+
+    .bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+  </style>
 </head>
+
 <body>
-<header style="display:flex;justify-content:space-between;align-items:center;">
-  <div>Admin / Organizer — EventX</div>
-  <button class="btn btn--ghost" th:href="@{/logout}">
-    <i class="ri-logout-box-r-line"></i> Logout
-  </button>
-</header>
+  <header style="display:flex;justify-content:space-between;align-items:center;">
+    <div>Admin / Organizer — EventX</div>
+    <form th:action="@{/logout}" method="post" style="display:inline">
+      <button type="submit" class="btn btn--ghost">
+        <i class="ri-logout-box-r-line"></i> Logout
+      </button>
+    </form>
 
-<div class="container">
+  </header>
+
+  <div class="container">
     <div class="grid">
-        <!-- Event form -->
-        <div class="card">
-            <div class="inner">
-                <h2>Event details</h2>
-                <div class="row">
-                    <div>
-                        <label>Title</label>
-                        <input id="title" placeholder="Live Concert 2025"/>
-                    </div>
-                    <div>
-                        <label>Date & Time</label>
-                        <input id="date" type="datetime-local"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div>
-                        <label>Venue</label>
-                        <input id="venue" placeholder="City Auditorium"/>
-                    </div>
-                    <div>
-                        <label>Hero Image URL</label>
-                        <input id="image" placeholder="https://..."/>
-                    </div>
-                </div>
-
-                <h3 style="margin-top:12px">Base prices</h3>
-                <div class="row">
-                    <div>
-                        <label>VIP (₹)</label>
-                        <input id="pVIP" type="number" value="1500"/>
-                    </div>
-                    <div>
-                        <label>Premium (₹)</label>
-                        <input id="pPREM" type="number" value="1000"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div>
-                        <label>Normal (₹)</label>
-                        <input id="pNORM" type="number" value="500"/>
-                    </div>
-                    <div>
-                        <label>Rating (for display)</label>
-                        <input id="rating" type="number" step="0.1" value="4.7"/>
-                    </div>
-                </div>
-
-                <h3 style="margin-top:12px">Seat grid</h3>
-                <div class="row">
-                    <div>
-                        <label>Rows</label>
-                        <input id="rows" type="number" min="1" max="20" value="8"/>
-                    </div>
-                    <div>
-                        <label>Cols</label>
-                        <input id="cols" type="number" min="1" max="20" value="12"/>
-                    </div>
-                </div>
-
-                <div class="bar" style="margin-top:10px">
-                    <button class="btn btn--ghost" onclick="buildGrid()">Build / Reset Grid</button>
-                    <!-- <button class="btn" onclick="saveEvent()">Save Event</button> -->
-                    <button class="btn" onclick="submitForApproval()">Submit for Approval</button>
-                </div>
-                <p class="muted" style="margin-top:6px">Tip: pick a tool below, then click seats to paint zones. “Blocked” makes a seat unavailable.</p>
+      <!-- Event form -->
+      <div class="card">
+        <div class="inner">
+          <h2>Event details</h2>
+          <div class="row">
+            <div>
+              <label>Title</label>
+              <input id="title" placeholder="Live Concert 2025" />
             </div>
-        </div>
-
-        <!-- Seat editor -->
-        <div class="card">
-            <div class="inner">
-                <h2>Seat designer</h2>
-                <div class="palette" id="tools">
-                    <div class="pill vip active" data-tool="VIP"><i class="ri-vip-crown-2-line"></i> VIP</div>
-                    <div class="pill prem" data-tool="PREMIUM"><i class="ri-vip-diamond-line"></i> Premium</div>
-                    <div class="pill norm" data-tool="NORMAL"><i class="ri-user-line"></i> Normal</div>
-                    <div class="pill block" data-tool="BLOCKED"><i class="ri-close-line"></i> Blocked</div>
-                    <div class="pill" data-tool="EMPTY"><i class="ri-eraser-line"></i> Empty</div>
-                </div>
-
-                <div class="legend" style="margin:10px 0 6px">
-                    <span><span class="box" style="background:var(--vip)"></span> VIP</span>
-                    <span><span class="box" style="background:var(--prem)"></span> Premium</span>
-                    <span><span class="box" style="background:var(--norm)"></span> Normal</span>
-                    <span><span class="box" style="background:#9ca3af"></span> Blocked</span>
-                    <span><span class="box" style="background:#e5e7eb"></span> Empty</span>
-                </div>
-
-                <div class="seat-wrap">
-                    <div id="seatGrid" class="seat-grid"></div>
-                </div>
+            <div>
+              <label>Date & Time</label>
+              <input id="date" type="datetime-local" />
             </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Venue</label>
+              <input id="venue" placeholder="City Auditorium" />
+            </div>
+            <div>
+              <label>Hero Image URL</label>
+              <input id="image" placeholder="https://..." />
+            </div>
+          </div>
+
+          <h3 style="margin-top:12px">Base prices</h3>
+          <div class="row">
+            <div>
+              <label>VIP (₹)</label>
+              <input id="pVIP" type="number" value="1500" />
+            </div>
+            <div>
+              <label>Premium (₹)</label>
+              <input id="pPREM" type="number" value="1000" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Normal (₹)</label>
+              <input id="pNORM" type="number" value="500" />
+            </div>
+            <div>
+              <label>Rating (for display)</label>
+              <input id="rating" type="number" step="0.1" value="4.7" />
+            </div>
+          </div>
+
+          <h3 style="margin-top:12px">Seat grid</h3>
+          <div class="row">
+            <div>
+              <label>Rows</label>
+              <input id="rows" type="number" min="1" max="20" value="8" />
+            </div>
+            <div>
+              <label>Cols</label>
+              <input id="cols" type="number" min="1" max="20" value="12" />
+            </div>
+          </div>
+
+          <div class="bar" style="margin-top:10px">
+            <button class="btn btn--ghost" onclick="buildGrid()">Build / Reset Grid</button>
+            <!-- <button class="btn" onclick="saveEvent()">Save Event</button> -->
+            <button class="btn" onclick="submitForApproval()">Submit for Approval</button>
+          </div>
+          <p class="muted" style="margin-top:6px">Tip: pick a tool below, then click seats to paint zones. “Blocked”
+            makes a seat unavailable.</p>
         </div>
+      </div>
+
+      <!-- Seat editor -->
+      <div class="card">
+        <div class="inner">
+          <h2>Seat designer</h2>
+          <div class="palette" id="tools">
+            <div class="pill vip active" data-tool="VIP"><i class="ri-vip-crown-2-line"></i> VIP</div>
+            <div class="pill prem" data-tool="PREMIUM"><i class="ri-vip-diamond-line"></i> Premium</div>
+            <div class="pill norm" data-tool="NORMAL"><i class="ri-user-line"></i> Normal</div>
+            <div class="pill block" data-tool="BLOCKED"><i class="ri-close-line"></i> Blocked</div>
+            <div class="pill" data-tool="EMPTY"><i class="ri-eraser-line"></i> Empty</div>
+          </div>
+
+          <div class="legend" style="margin:10px 0 6px">
+            <span><span class="box" style="background:var(--vip)"></span> VIP</span>
+            <span><span class="box" style="background:var(--prem)"></span> Premium</span>
+            <span><span class="box" style="background:var(--norm)"></span> Normal</span>
+            <span><span class="box" style="background:#9ca3af"></span> Blocked</span>
+            <span><span class="box" style="background:#e5e7eb"></span> Empty</span>
+          </div>
+
+          <div class="seat-wrap">
+            <div id="seatGrid" class="seat-grid"></div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-    (function guard(){
-    const u = JSON.parse(localStorage.getItem("currentUser")||"null");
-    if(!u || u.role!=="organizer"){
-      alert("Please sign in as Organizer.");
+  <script>
+    (function guard() {
+      const u = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!u || u.role !== "organizer") {
+        alert("Please sign in as Organizer.");
+        location.href = "login.html";
+      }
+    })();
+
+    // optional logout button helper (call from a header button)
+    function logout() {
+      localStorage.removeItem("currentUser");
       location.href = "login.html";
     }
-  })();
 
-  // optional logout button helper (call from a header button)
-  function logout(){
-    localStorage.removeItem("currentUser");
-    location.href = "login.html";
-  }
+    const state = { tool: "VIP", rows: 8, cols: 12, grid: [] };
+    function seatCode(r, c) { return String.fromCharCode(65 + r) + (c + 1); }
 
-    const state = { tool:"VIP", rows:8, cols:12, grid:[] };
-    function seatCode(r,c){ return String.fromCharCode(65 + r) + (c+1); }
-
-    function buildGrid(){
-      state.rows = parseInt(document.getElementById("rows").value,10) || 8;
-      state.cols = parseInt(document.getElementById("cols").value,10) || 12;
-      state.grid = Array.from({length: state.rows}, (_,r)=>
-        Array.from({length: state.cols}, (_,c)=>({code:seatCode(r,c), zone:"EMPTY", blocked:false}))
+    function buildGrid() {
+      state.rows = parseInt(document.getElementById("rows").value, 10) || 8;
+      state.cols = parseInt(document.getElementById("cols").value, 10) || 12;
+      state.grid = Array.from({ length: state.rows }, (_, r) =>
+        Array.from({ length: state.cols }, (_, c) => ({ code: seatCode(r, c), zone: "EMPTY", blocked: false }))
       );
       drawGrid();
     }
-    function drawGrid(){
+    function drawGrid() {
       const grid = document.getElementById("seatGrid");
       grid.style.gridTemplateColumns = `repeat(${state.cols}, 32px)`;
       grid.innerHTML = "";
-      for(let r=0;r<state.rows;r++){
-        for(let c=0;c<state.cols;c++){
+      for (let r = 0; r < state.rows; r++) {
+        for (let c = 0; c < state.cols; c++) {
           const cell = state.grid[r][c];
           const el = document.createElement("div");
           el.className = "seat " + cssFor(cell);
           el.textContent = cellLabel(cell);
           el.title = cell.code + " • " + (cell.blocked ? "BLOCKED" : cell.zone);
-          el.addEventListener("click",()=>paintCell(r,c));
+          el.addEventListener("click", () => paintCell(r, c));
           grid.appendChild(el);
         }
       }
     }
-    function cssFor(cell){
-      if(cell.blocked) return "blocked";
-      if(cell.zone==="VIP") return "vip";
-      if(cell.zone==="PREMIUM") return "premium";
-      if(cell.zone==="NORMAL") return "normal";
+    function cssFor(cell) {
+      if (cell.blocked) return "blocked";
+      if (cell.zone === "VIP") return "vip";
+      if (cell.zone === "PREMIUM") return "premium";
+      if (cell.zone === "NORMAL") return "normal";
       return "empty";
     }
-    function cellLabel(cell){ return (cell.zone==="EMPTY" && !cell.blocked)?"":cell.code; }
+    function cellLabel(cell) { return (cell.zone === "EMPTY" && !cell.blocked) ? "" : cell.code; }
 
-    document.querySelectorAll("#tools .pill").forEach(p=>{
-      p.addEventListener("click",()=>{
-        document.querySelectorAll("#tools .pill").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll("#tools .pill").forEach(p => {
+      p.addEventListener("click", () => {
+        document.querySelectorAll("#tools .pill").forEach(x => x.classList.remove("active"));
         p.classList.add("active");
-        state.tool=p.dataset.tool;
+        state.tool = p.dataset.tool;
       });
     });
-    function paintCell(r,c){
-      const cell=state.grid[r][c];
-      switch(state.tool){
-        case "VIP": cell.zone="VIP";cell.blocked=false;break;
-        case "PREMIUM": cell.zone="PREMIUM";cell.blocked=false;break;
-        case "NORMAL": cell.zone="NORMAL";cell.blocked=false;break;
-        case "BLOCKED": cell.blocked=true;break;
-        case "EMPTY": cell.zone="EMPTY";cell.blocked=false;break;
+    function paintCell(r, c) {
+      const cell = state.grid[r][c];
+      switch (state.tool) {
+        case "VIP": cell.zone = "VIP"; cell.blocked = false; break;
+        case "PREMIUM": cell.zone = "PREMIUM"; cell.blocked = false; break;
+        case "NORMAL": cell.zone = "NORMAL"; cell.blocked = false; break;
+        case "BLOCKED": cell.blocked = true; break;
+        case "EMPTY": cell.zone = "EMPTY"; cell.blocked = false; break;
       }
       drawGrid();
     }
 
-    function submitForApproval(){
-  const user = JSON.parse(localStorage.getItem("currentUser")||"null");
-  if(!user){ alert("Please sign in as Organizer."); location.href="login.html"; return; }
+    function submitForApproval() {
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user) { alert("Please sign in as Organizer."); location.href = "login.html"; return; }
 
-  // Build event from the form + seat designer state
-  const event = {
-    id: "ORG-" + Math.random().toString(36).slice(2,8).toUpperCase(),
-    title: document.getElementById("title").value || "Untitled Event",
-    date: document.getElementById("date").value || "",
-    location: document.getElementById("venue").value || "",
-    image: document.getElementById("image").value || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop",
-    rating: parseFloat(document.getElementById("rating").value || "4.5"),
-    basePrices: {
-      VIP: parseInt(document.getElementById("pVIP").value || "1500", 10),
-      PREMIUM: parseInt(document.getElementById("pPREM").value || "1000", 10),
-      REGULAR: parseInt(document.getElementById("pNORM").value || "500", 10)
-    },
-    gridSpec: { rows: state.rows, cols: state.cols, cells: state.grid },
-
-    // IMPORTANT: workflow + ownership
-    status: "PENDING",
-    organizerId: user.id,
-    submittedAt: Date.now(),
-    rejectionReason: ""
-  };
-
-  const store = JSON.parse(localStorage.getItem("adminEvents") || "[]");
-  store.unshift(event); // newest first
-  localStorage.setItem("adminEvents", JSON.stringify(store));
-
-  alert("✅ Event submitted for admin approval!");
-  // Clear any edit flag and go to My Events
-  localStorage.removeItem("adminEditEventId");
-  location.href = "organizer-events.html";
-}
-
-    function saveEvent(){
-      const event={
-        id:"ADM-"+Math.random().toString(36).slice(2,8).toUpperCase(),
-        title:document.getElementById("title").value||"Untitled Event",
-        date:document.getElementById("date").value||"",
-        location:document.getElementById("venue").value||"",
-        image:document.getElementById("image").value||"https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop",
-        rating:parseFloat(document.getElementById("rating").value||"4.5"),
-        basePrices:{
-          VIP:parseInt(document.getElementById("pVIP").value||"1500",10),
-          PREMIUM:parseInt(document.getElementById("pPREM").value||"1000",10),
-          REGULAR:parseInt(document.getElementById("pNORM").value||"500",10)
+      // Build event from the form + seat designer state
+      const event = {
+        id: "ORG-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+        title: document.getElementById("title").value || "Untitled Event",
+        date: document.getElementById("date").value || "",
+        location: document.getElementById("venue").value || "",
+        image: document.getElementById("image").value || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop",
+        rating: parseFloat(document.getElementById("rating").value || "4.5"),
+        basePrices: {
+          VIP: parseInt(document.getElementById("pVIP").value || "1500", 10),
+          PREMIUM: parseInt(document.getElementById("pPREM").value || "1000", 10),
+          REGULAR: parseInt(document.getElementById("pNORM").value || "500", 10)
         },
-        gridSpec:{rows:state.rows, cols:state.cols, cells:state.grid}
+        gridSpec: { rows: state.rows, cols: state.cols, cells: state.grid },
+
+        // IMPORTANT: workflow + ownership
+        status: "PENDING",
+        organizerId: user.id,
+        submittedAt: Date.now(),
+        rejectionReason: ""
       };
-      const store=JSON.parse(localStorage.getItem("adminEvents")||"[]");
+
+      const store = JSON.parse(localStorage.getItem("adminEvents") || "[]");
+      store.unshift(event); // newest first
+      localStorage.setItem("adminEvents", JSON.stringify(store));
+
+      alert("✅ Event submitted for admin approval!");
+      // Clear any edit flag and go to My Events
+      localStorage.removeItem("adminEditEventId");
+      location.href = "organizer-events.html";
+    }
+
+    function saveEvent() {
+      const event = {
+        id: "ADM-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+        title: document.getElementById("title").value || "Untitled Event",
+        date: document.getElementById("date").value || "",
+        location: document.getElementById("venue").value || "",
+        image: document.getElementById("image").value || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop",
+        rating: parseFloat(document.getElementById("rating").value || "4.5"),
+        basePrices: {
+          VIP: parseInt(document.getElementById("pVIP").value || "1500", 10),
+          PREMIUM: parseInt(document.getElementById("pPREM").value || "1000", 10),
+          REGULAR: parseInt(document.getElementById("pNORM").value || "500", 10)
+        },
+        gridSpec: { rows: state.rows, cols: state.cols, cells: state.grid }
+      };
+      const store = JSON.parse(localStorage.getItem("adminEvents") || "[]");
       store.push(event);
-      localStorage.setItem("adminEvents",JSON.stringify(store));
-      localStorage.setItem("adminActiveEvent",JSON.stringify(event));
+      localStorage.setItem("adminEvents", JSON.stringify(store));
+      localStorage.setItem("adminActiveEvent", JSON.stringify(event));
       renderSaved();
       alert("Event saved! Set as active. You can now open User View.");
     }
 
-    function renderSaved(){
-      const list=JSON.parse(localStorage.getItem("adminEvents")||"[]");
-      const wrap=document.getElementById("eventList");
-      if(!list.length){wrap.textContent="No events yet.";return;}
-      wrap.innerHTML=list.map(e=>`
+    function renderSaved() {
+      const list = JSON.parse(localStorage.getItem("adminEvents") || "[]");
+      const wrap = document.getElementById("eventList");
+      if (!list.length) { wrap.textContent = "No events yet."; return; }
+      wrap.innerHTML = list.map(e => `
         <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px">
           <div>
             <div style="font-weight:800">${e.title}</div>
-            <div class="muted" style="font-size:13px">${e.date||"—"} • ${e.location||"—"}</div>
+            <div class="muted" style="font-size:13px">${e.date || "—"} • ${e.location || "—"}</div>
           </div>
           <button class="btn btn--ghost" onclick='setActive("${e.id}")'><i class="ri-check-line"></i> Set Active</button>
         </div>
       `).join("");
     }
-    function setActive(id){
-      const list=JSON.parse(localStorage.getItem("adminEvents")||"[]");
-      const found=list.find(x=>x.id===id);
-      if(found){
-        localStorage.setItem("adminActiveEvent",JSON.stringify(found));
+    function setActive(id) {
+      const list = JSON.parse(localStorage.getItem("adminEvents") || "[]");
+      const found = list.find(x => x.id === id);
+      if (found) {
+        localStorage.setItem("adminActiveEvent", JSON.stringify(found));
         alert("Active event set.");
       }
     }
-    function openUser(){
-  // open the public list of all active events
-  location.href = "user-active.html";
-}
-
- (function maybeLoadForEdit(){
-    const editId = localStorage.getItem("adminEditEventId");
-    if(!editId) return;
-    const store = JSON.parse(localStorage.getItem("adminEvents") || "[]");
-    const ev = store.find(e => e.id === editId);
-    if(!ev){ localStorage.removeItem("adminEditEventId"); return; }
-
-    // Prefill form
-    document.getElementById("title").value = ev.title || "";
-    document.getElementById("date").value  = ev.date || "";
-    document.getElementById("venue").value = ev.location || "";
-    document.getElementById("image").value = ev.image || "";
-    document.getElementById("rating").value = ev.rating ?? 4.5;
-
-    document.getElementById("pVIP").value  = ev.basePrices?.VIP ?? 1500;
-    document.getElementById("pPREM").value = ev.basePrices?.PREMIUM ?? 1000;
-    document.getElementById("pNORM").value = ev.basePrices?.REGULAR ?? 500;
-
-    // Load grid
-    document.getElementById("rows").value = ev.gridSpec?.rows ?? 8;
-    document.getElementById("cols").value = ev.gridSpec?.cols ?? 12;
-    // Rebuild state.grid from saved cells
-    state.rows = ev.gridSpec?.rows ?? 8;
-    state.cols = ev.gridSpec?.cols ?? 12;
-    state.grid = (ev.gridSpec?.cells || []).map(row => row.map(cell => ({...cell})));
-    drawGrid();
-
-    // Replace Save button to “Update Event”
-    const bar = document.querySelector(".bar");
-    if(bar){
-      const btn = bar.querySelector(".btn:not(.btn--ghost)");
-      if(btn){
-        btn.textContent = "Update Event";
-        btn.onclick = function updateEvent(){
-          // Overwrite found event in store
-          const idx = store.findIndex(x => x.id === editId);
-          if(idx>-1){
-            const updated = {
-              id: ev.id,
-              title: document.getElementById("title").value || "Untitled Event",
-              date: document.getElementById("date").value || "",
-              location: document.getElementById("venue").value || "",
-              image: document.getElementById("image").value || ev.image,
-              rating: parseFloat(document.getElementById("rating").value || "4.5"),
-              basePrices:{
-                VIP: parseInt(document.getElementById("pVIP").value || "1500",10),
-                PREMIUM: parseInt(document.getElementById("pPREM").value || "1000",10),
-                REGULAR: parseInt(document.getElementById("pNORM").value || "500",10)
-              },
-              gridSpec:{ rows: state.rows, cols: state.cols, cells: state.grid }
-            };
-            store[idx] = updated;
-            localStorage.setItem("adminEvents", JSON.stringify(store));
-            // If it was active, keep it active
-            const active = JSON.parse(localStorage.getItem("adminActiveEvent") || "null");
-            if(active && active.id === updated.id){
-              localStorage.setItem("adminActiveEvent", JSON.stringify(updated));
-            }
-            alert("Event updated.");
-            localStorage.removeItem("adminEditEventId");
-          }
-        };
-      }
+    function openUser() {
+      // open the public list of all active events
+      location.href = "user-active.html";
     }
-  })();
 
-  // keep your existing init calls:
+    (function maybeLoadForEdit() {
+      const editId = localStorage.getItem("adminEditEventId");
+      if (!editId) return;
+      const store = JSON.parse(localStorage.getItem("adminEvents") || "[]");
+      const ev = store.find(e => e.id === editId);
+      if (!ev) { localStorage.removeItem("adminEditEventId"); return; }
+
+      // Prefill form
+      document.getElementById("title").value = ev.title || "";
+      document.getElementById("date").value = ev.date || "";
+      document.getElementById("venue").value = ev.location || "";
+      document.getElementById("image").value = ev.image || "";
+      document.getElementById("rating").value = ev.rating ?? 4.5;
+
+      document.getElementById("pVIP").value = ev.basePrices?.VIP ?? 1500;
+      document.getElementById("pPREM").value = ev.basePrices?.PREMIUM ?? 1000;
+      document.getElementById("pNORM").value = ev.basePrices?.REGULAR ?? 500;
+
+      // Load grid
+      document.getElementById("rows").value = ev.gridSpec?.rows ?? 8;
+      document.getElementById("cols").value = ev.gridSpec?.cols ?? 12;
+      // Rebuild state.grid from saved cells
+      state.rows = ev.gridSpec?.rows ?? 8;
+      state.cols = ev.gridSpec?.cols ?? 12;
+      state.grid = (ev.gridSpec?.cells || []).map(row => row.map(cell => ({ ...cell })));
+      drawGrid();
+
+      // Replace Save button to “Update Event”
+      const bar = document.querySelector(".bar");
+      if (bar) {
+        const btn = bar.querySelector(".btn:not(.btn--ghost)");
+        if (btn) {
+          btn.textContent = "Update Event";
+          btn.onclick = function updateEvent() {
+            // Overwrite found event in store
+            const idx = store.findIndex(x => x.id === editId);
+            if (idx > -1) {
+              const updated = {
+                id: ev.id,
+                title: document.getElementById("title").value || "Untitled Event",
+                date: document.getElementById("date").value || "",
+                location: document.getElementById("venue").value || "",
+                image: document.getElementById("image").value || ev.image,
+                rating: parseFloat(document.getElementById("rating").value || "4.5"),
+                basePrices: {
+                  VIP: parseInt(document.getElementById("pVIP").value || "1500", 10),
+                  PREMIUM: parseInt(document.getElementById("pPREM").value || "1000", 10),
+                  REGULAR: parseInt(document.getElementById("pNORM").value || "500", 10)
+                },
+                gridSpec: { rows: state.rows, cols: state.cols, cells: state.grid }
+              };
+              store[idx] = updated;
+              localStorage.setItem("adminEvents", JSON.stringify(store));
+              // If it was active, keep it active
+              const active = JSON.parse(localStorage.getItem("adminActiveEvent") || "null");
+              if (active && active.id === updated.id) {
+                localStorage.setItem("adminActiveEvent", JSON.stringify(updated));
+              }
+              alert("Event updated.");
+              localStorage.removeItem("adminEditEventId");
+            }
+          };
+        }
+      }
+    })();
+
+    // keep your existing init calls:
     buildGrid();
     renderSaved();
-</script>
+  </script>
 </body>
+
 </html>
